@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nyuza — Tous mes liens</title>
+
+<!-- ── Aperçu au partage (WhatsApp, Discord, TikTok) ───────────────── -->
+<meta name="description" content="Tous les liens de Nyuza au même endroit.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nyuza">
+<meta property="og:description" content="Tous mes liens au même endroit.">
+<meta property="og:image" content="avatar.jpg">
+<meta property="og:url" content="https://nyuza.github.io/">
+<meta name="theme-color" content="#0A0C11">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   PALETTE — « or sur encre »
+   Deux couleurs seulement : l'or (accent) et la braise (antenne).
+   Le reste n'est que du gris travaillé.
+   ═══════════════════════════════════════════════════════════════════ */
+:root{
+  --encre:      #0A0C11;
+  --encre-haut: #131926;
+  --or:         #E8B14C;
+  --or-doux:    #F5D08A;
+  --braise:     #FF4D3D;
+  --texte:      #F2F4F8;
+  --sourdine:   #8892A6;
+
+  --rayon:      18px;
+  --colonne:    26rem;
+
+  --mx: 50%;
+  --my: 30%;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  min-height:100svh;
+  background:var(--encre);
+  color:var(--texte);
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  display:flex; justify-content:center; align-items:center;
+  padding:
+    calc(env(safe-area-inset-top) + 2.5rem)
+    1.25rem
+    calc(env(safe-area-inset-bottom) + 2.5rem);
+  overflow-x:hidden;
+}
+
+/* ═══ ATMOSPHÈRE ════════════════════════════════════════════════════ */
+.nappe{ position:fixed; border-radius:50%; pointer-events:none; z-index:0; }
+.nappe--or{
+  width:min(80vw,34rem); aspect-ratio:1; top:-14%; left:-18%;
+  background:radial-gradient(circle, rgba(232,177,76,.16), transparent 68%);
+  animation:derive-a 38s ease-in-out infinite;
+}
+.nappe--froide{
+  width:min(90vw,40rem); aspect-ratio:1; bottom:-24%; right:-22%;
+  background:radial-gradient(circle, rgba(58,86,140,.20), transparent 70%);
+  animation:derive-b 47s ease-in-out infinite;
+}
+.nappe--braise{
+  width:min(60vw,24rem); aspect-ratio:1; top:38%; right:-16%;
+  background:radial-gradient(circle, rgba(255,77,61,.09), transparent 72%);
+  animation:derive-c 33s ease-in-out infinite;
+}
+@keyframes derive-a{ 50%{ transform:translate3d(14%,10%,0) scale(1.14); } }
+@keyframes derive-b{ 50%{ transform:translate3d(-12%,-9%,0) scale(1.09); } }
+@keyframes derive-c{ 50%{ transform:translate3d(-9%,13%,0) scale(.9); } }
+
+.grain{
+  position:fixed; inset:0; z-index:6; pointer-events:none;
+  opacity:.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.halo{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(22rem circle at var(--mx) var(--my),
+    rgba(232,177,76,.07), transparent 62%);
+}
+
+/* ═══ SCÈNE 3D ══════════════════════════════════════════════════════
+   La carte a un recto et un verso. Un seul objet qui pivote.
+   ═══════════════════════════════════════════════════════════════════ */
+.scene{
+  position:relative; z-index:3;
+  width:100%; max-width:var(--colonne);
+  perspective:1400px;
+}
+.pivot{
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .9s cubic-bezier(.16,1,.3,1),
+             height   .9s cubic-bezier(.16,1,.3,1);
+  will-change:transform;
+}
+body.retournee .pivot{ transform:rotateY(180deg); }
+
+.face{
+  position:absolute; top:0; left:0; width:100%;
+  -webkit-backface-visibility:hidden;
+          backface-visibility:hidden;
+  display:flex; flex-direction:column; align-items:center; gap:2rem;
+}
+.face--dos{ transform:rotateY(180deg); }
+/* La face cachée ne doit pas être cliquable ni tabulable */
+.face[aria-hidden="true"]{ pointer-events:none; }
+
+/* ═══ VOYANT D'ANTENNE ══════════════════════════════════════════════ */
+.antenne{ position:relative; width:6.75rem; aspect-ratio:1; display:grid; place-items:center; }
+.antenne::before{
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background:conic-gradient(from 0deg, transparent 0deg,
+    rgba(232,177,76,.05) 180deg, var(--or) 330deg, var(--or-doux) 350deg, transparent 360deg);
+  animation:balayage 6s linear infinite;
+}
+.antenne::after{
+  content:''; position:absolute; inset:3px; border-radius:50%; background:var(--encre);
+}
+@keyframes balayage{ to{ transform:rotate(1turn); } }
+
+.antenne img, .antenne .monogramme{
+  position:relative; z-index:1;
+  width:calc(100% - 12px); aspect-ratio:1;
+  border-radius:50%; object-fit:cover;
+  box-shadow:0 1.5rem 3rem rgba(0,0,0,.6);
+}
+.monogramme{
+  display:grid; place-items:center;
+  background:linear-gradient(160deg,var(--encre-haut),#0d1119);
+  font-size:2.5rem; font-weight:700; color:var(--or); letter-spacing:-.03em;
+}
+
+.etat{
+  position:absolute; bottom:-.35rem; left:50%; transform:translateX(-50%); z-index:2;
+  display:flex; align-items:center; gap:.4rem;
+  padding:.28rem .7rem; border-radius:999px;
+  background:rgba(10,12,17,.92); border:1px solid rgba(255,255,255,.10);
+  font-size:.6rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--sourdine); white-space:nowrap;
+}
+.etat .point{ width:.4rem; aspect-ratio:1; border-radius:50%; background:var(--sourdine); }
+body.en-direct .etat{ color:#FFD9D4; border-color:rgba(255,77,61,.35); }
+body.en-direct .etat .point{
+  background:var(--braise); box-shadow:0 0 0 0 rgba(255,77,61,.6);
+  animation:pouls 2s ease-out infinite;
+}
+body.en-direct .antenne::before{
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(255,77,61,.06) 180deg,
+    var(--braise) 336deg,#FF8A7E 352deg,transparent 360deg);
+  animation-duration:3.4s;
+}
+@keyframes pouls{
+  70%{ box-shadow:0 0 0 .55rem rgba(255,77,61,0); }
+  100%{ box-shadow:0 0 0 0 rgba(255,77,61,0); }
+}
+
+/* ═══ IDENTITÉ ══════════════════════════════════════════════════════ */
+.identite{ text-align:center; display:flex; flex-direction:column; gap:.45rem; }
+.nom{
+  font-size:clamp(2rem,9vw,2.6rem); font-weight:700;
+  letter-spacing:-.035em; line-height:1;
+  background:linear-gradient(175deg,#fff 30%,#9AA4B8);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.handle{
+  font-size:.68rem; font-weight:500; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--sourdine); opacity:.75;
+}
+.bio{ margin-top:.5rem; font-size:.9rem; line-height:1.5; color:var(--sourdine); }
+
+/* ═══ LIENS ═════════════════════════════════════════════════════════ */
+.liens{ width:100%; display:flex; flex-direction:column; gap:.7rem; list-style:none; }
+
+.lien{
+  position:relative;
+  display:flex; align-items:center; gap:.9rem;
+  min-height:3.5rem; padding:0 1.15rem;
+  border-radius:var(--rayon);
+  background:rgba(255,255,255,.038);
+  border:none; color:var(--texte); text-decoration:none;
+  font-size:.95rem; font-weight:550;
+  overflow:hidden; isolation:isolate;
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.13),
+    0 1rem 2.5rem rgba(0,0,0,.45);
+  transform:perspective(900px);
+  transition:transform .45s cubic-bezier(.16,1,.3,1), background .3s;
+  will-change:transform;
+}
+.lien::before{
+  content:''; position:absolute; inset:0; border-radius:inherit; padding:1px;
+  background:radial-gradient(12rem circle at var(--bx,50%) var(--by,0%),
+    rgba(232,177,76,.55), rgba(255,255,255,.07) 58%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  pointer-events:none; transition:background .2s;
+}
+.lien:hover{ background:rgba(255,255,255,.06); }
+.lien:active{ transform:perspective(900px) scale(.985); }
+.lien:focus-visible{ outline:2px solid var(--or); outline-offset:3px; }
+
+.lien .icone{ flex:none; width:1.25rem; height:1.25rem; color:var(--sourdine); }
+.lien .libelle{ flex:1; }
+.lien .fleche{
+  flex:none; width:1rem; height:1rem; color:var(--sourdine); opacity:.4;
+  transition:transform .3s, opacity .3s;
+}
+.lien:hover .fleche{ transform:translateX(3px); opacity:.9; }
+
+.lien--principal{
+  min-height:4.25rem; font-size:1.02rem; font-weight:650;
+  background:linear-gradient(180deg,rgba(232,177,76,.13),rgba(232,177,76,.05));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.2),
+    0 1.25rem 3rem rgba(232,177,76,.13);
+}
+.lien--principal .icone{ color:var(--or); width:1.4rem; height:1.4rem; }
+.lien--principal:hover{ background:linear-gradient(180deg,rgba(232,177,76,.19),rgba(232,177,76,.07)); }
+
+/* ── Plateformes pas encore ouvertes ─────────────────────────────── */
+.lien--bientot{
+  cursor:default;
+  background:rgba(255,255,255,.022);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 .5rem 1.5rem rgba(0,0,0,.3);
+}
+.lien--bientot .libelle,
+.lien--bientot .icone{ opacity:.42; }
+.lien--bientot::before{ background:rgba(255,255,255,.05); }
+.bientot{
+  flex:none;
+  padding:.2rem .55rem; border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  font-size:.56rem; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--sourdine); opacity:.6;
+}
+
+/* ── États du tirage au sort ──────────────────────────────────────── */
+/* Le lien survolé par la roue */
+.lien.vise{
+  background:rgba(232,177,76,.10);
+  transform:perspective(900px) translateX(4px);
+  transition:transform .09s ease-out, background .09s;
+}
+.lien.vise::before{
+  background:radial-gradient(14rem circle at 50% 50%, var(--or-doux), rgba(232,177,76,.3) 70%);
+}
+/* Le lien tiré */
+.lien.gagnant{
+  background:linear-gradient(180deg,rgba(232,177,76,.22),rgba(232,177,76,.08));
+  transform:perspective(900px) scale(1.025);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    0 1.5rem 3.5rem rgba(232,177,76,.28);
+}
+.lien.gagnant::before{
+  background:radial-gradient(16rem circle at 50% 50%, var(--or), rgba(232,177,76,.35) 70%);
+}
+.lien.gagnant .icone,
+.lien.gagnant .fleche{ color:var(--or); opacity:1; }
+/* Les autres s'effacent pendant le tirage */
+body.tirage-fini .lien:not(.gagnant){ opacity:.32; transition:opacity .5s; }
+
+/* ═══ COMMANDES (tirage + retournement) ═════════════════════════════ */
+.commandes{ display:flex; gap:.55rem; width:100%; }
+
+.commande{
+  flex:1;
+  display:flex; align-items:center; justify-content:center; gap:.5rem;
+  min-height:2.9rem; padding:0 .9rem;
+  border-radius:999px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.11);
+  color:var(--sourdine);
+  font-family:inherit; font-size:.72rem; font-weight:600;
+  letter-spacing:.09em; text-transform:uppercase;
+  cursor:pointer;
+  transition:color .3s, border-color .3s, background .3s, transform .25s;
+}
+.commande:hover{ color:var(--texte); border-color:rgba(255,255,255,.24); }
+.commande:active{ transform:scale(.97); }
+.commande:focus-visible{ outline:2px solid var(--or); outline-offset:3px; }
+.commande svg{ width:.95rem; height:.95rem; flex:none; }
+.commande[disabled]{ opacity:.5; cursor:default; }
+
+/* Le bouton devient doré une fois le tirage terminé */
+.commande.pret{
+  color:var(--encre); font-weight:700;
+  background:linear-gradient(180deg,var(--or-doux),var(--or));
+  border-color:transparent;
+  box-shadow:0 .75rem 2rem rgba(232,177,76,.3);
+}
+.commande.pret:hover{ color:var(--encre); }
+
+/* ═══ VERSO ═════════════════════════════════════════════════════════ */
+.dos{
+  width:100%;
+  display:flex; flex-direction:column; gap:1.5rem;
+  padding:1.75rem 1.5rem;
+  border-radius:calc(var(--rayon) + 6px);
+  background:linear-gradient(170deg, rgba(19,25,38,.92), rgba(10,12,17,.92));
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11), 0 1.5rem 4rem rgba(0,0,0,.5);
+}
+.dos-titre{
+  font-size:.62rem; font-weight:600; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--or); opacity:.85;
+}
+.bloc h2{
+  font-size:.66rem; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--sourdine); opacity:.6;
+  margin-bottom:.7rem;
+}
+/* Planning : la seule liste numérotée justifiée, car c'est une semaine */
+.planning{ list-style:none; display:flex; flex-direction:column; gap:.5rem; }
+.planning li{
+  display:flex; align-items:baseline; justify-content:space-between; gap:1rem;
+  padding-bottom:.5rem;
+  border-bottom:1px solid rgba(255,255,255,.055);
+  font-size:.88rem;
+}
+.planning li:last-child{ border-bottom:none; padding-bottom:0; }
+.planning .jour{ color:var(--texte); font-weight:550; }
+.planning .heure{
+  color:var(--or); font-weight:600;
+  font-variant-numeric:tabular-nums; letter-spacing:.02em;
+}
+.regles{ list-style:none; display:flex; flex-direction:column; gap:.55rem; }
+.regles li{
+  position:relative; padding-left:1.1rem;
+  font-size:.85rem; line-height:1.45; color:var(--sourdine);
+}
+.regles li::before{
+  content:''; position:absolute; left:0; top:.55em;
+  width:.3rem; height:.3rem; border-radius:50%; background:var(--or); opacity:.7;
+}
+.mot{ font-size:.85rem; line-height:1.6; color:var(--sourdine); font-style:italic; }
+
+.pied{
+  font-size:.62rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--sourdine); opacity:.35; text-align:center;
+}
+
+/* ═══ ENTRÉE EN SCÈNE ═══════════════════════════════════════════════ */
+.apparait{ opacity:0; animation:monte .85s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes monte{
+  from{ opacity:0; transform:translateY(20px); filter:blur(8px); }
+  to  { opacity:1; transform:none;             filter:blur(0);   }
+}
+.antenne   { animation-delay:.05s; }
+.identite  { animation-delay:.22s; }
+.liens li:nth-child(1){ animation-delay:.36s; }
+.liens li:nth-child(2){ animation-delay:.43s; }
+.liens li:nth-child(3){ animation-delay:.50s; }
+.liens li:nth-child(4){ animation-delay:.57s; }
+.commandes { animation-delay:.70s; }
+.pied      { animation-delay:.80s; }
+
+@supports not (backdrop-filter:blur(4px)){
+  .lien{ background:rgba(19,25,38,.92); }
+}
+
+/* ═══ ACCESSIBILITÉ ═════════════════════════════════════════════════ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation:none !important; transition:none !important; }
+  .apparait{ opacity:1; }
+  .halo{ display:none; }
+  /* Le retournement devient un simple échange, sans rotation */
+  .pivot{ transform:none !important; }
+  .face--dos{ transform:none; }
+}
+</style>
+</head>
+
+<body>
+  <div class="nappe nappe--or"></div>
+  <div class="nappe nappe--froide"></div>
+  <div class="nappe nappe--braise"></div>
+  <div class="halo"></div>
+  <div class="grain"></div>
+
+  <div class="scene">
+    <div class="pivot" id="pivot">
+
+      <!-- ══════════ RECTO ══════════ -->
+      <div class="face face--recto" id="recto">
+
+        <div class="antenne apparait">
+          <img src="avatar.jpg" alt="Nyuza" onerror="this.outerHTML='&lt;div class=\'monogramme\'&gt;N&lt;/div&gt;'">
+          <span class="etat"><span class="point"></span><span id="libelle-etat">Hors antenne</span></span>
+        </div>
+
+        <div class="identite apparait">
+          <h1 class="nom">Nyuza</h1>
+          <p class="handle">@tiktok.nyuza</p>
+          <p class="bio">Tous mes liens au même endroit</p>
+        </div>
+
+        <ul class="liens">
+          <li class="apparait">
+            <a class="lien lien--principal" data-nom="TikTok"
+               href="https://www.tiktok.com/@tiktok.nyuza" target="_blank" rel="noopener">
+              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.4 2.6 2 4.2 4.6 4.5"/>
+              </svg>
+              <span class="libelle">Voir mes lives TikTok</span>
+              <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+
+          <li class="apparait">
+            <a class="lien" data-nom="Discord" href="https://discord.gg/UTTZ8RDGrr" target="_blank" rel="noopener">
+              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8.5 6.5C6 7 4.3 8.6 4 10.2 3.4 13 3.3 15.8 4 18c1 .9 2.3 1.5 3.6 1.8l.8-1.4"/>
+                <path d="M15.5 6.5c2.5.5 4.2 2.1 4.5 3.7.6 2.8.7 5.6 0 7.8-1 .9-2.3 1.5-3.6 1.8l-.8-1.4"/>
+                <path d="M8.5 6.5 9.2 5c1.9-.4 3.7-.4 5.6 0l.7 1.5"/>
+                <ellipse cx="9.5" cy="13" rx="1.2" ry="1.5"/><ellipse cx="14.5" cy="13" rx="1.2" ry="1.5"/>
+              </svg>
+              <span class="libelle">Rejoindre le Discord</span>
+              <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </li>
+
+          <li class="apparait">
+            <span class="lien lien--bientot" data-nom="Instagram">
+              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/>
+                <circle cx="17" cy="7" r=".9" fill="currentColor" stroke="none"/>
+              </svg>
+              <span class="libelle">Instagram</span>
+              <span class="bientot">Bientôt</span>
+            </span>
+          </li>
+
+          <li class="apparait">
+            <span class="lien lien--bientot" data-nom="YouTube">
+              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.5 9.5 15 12l-4.5 2.5z"/>
+              </svg>
+              <span class="libelle">YouTube</span>
+              <span class="bientot">Bientôt</span>
+            </span>
+          </li>
+        </ul>
+
+        <div class="commandes apparait">
+          <button class="commande" id="tirage" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7h4l8 10h4"/><path d="M4 17h4l3-3.8"/>
+              <path d="M17 4l3 3-3 3"/><path d="M17 14l3 3-3 3"/>
+            </svg>
+            <span id="tirage-libelle">Choisis pour moi</span>
+          </button>
+
+          <button class="commande" id="retourner" type="button" aria-controls="verso">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 4v4h-4"/>
+              <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 20v-4h4"/>
+            </svg>
+            <span>Le studio</span>
+          </button>
+        </div>
+
+        <p class="pied apparait">Nyuza · 2026</p>
+      </div>
+
+      <!-- ══════════ VERSO ══════════ -->
+      <div class="face face--dos" id="verso" aria-hidden="true">
+        <div class="dos">
+          <p class="dos-titre">Le studio</p>
+
+          <div class="bloc">
+            <h2>Les lives de la semaine</h2>
+            <ul class="planning">
+              <li><span class="jour">Mardi</span>    <span class="heure">21h00</span></li>
+              <li><span class="jour">Jeudi</span>    <span class="heure">21h00</span></li>
+              <li><span class="jour">Samedi</span>   <span class="heure">22h30</span></li>
+            </ul>
+          </div>
+
+          <div class="bloc">
+            <h2>Dans la communauté</h2>
+            <ul class="regles">
+              <li>On se parle comme on aimerait qu'on nous parle.</li>
+              <li>Les liens et la pub se demandent avant.</li>
+              <li>Un souci pendant le live ? Un modérateur répond en MP.</li>
+            </ul>
+          </div>
+
+          <p class="mot">« Merci d'être passé. Le Discord, c'est là que ça continue entre deux lives. »</p>
+        </div>
+
+        <div class="commandes">
+          <button class="commande" id="revenir" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 6 4 12l6 6"/><path d="M4 12h16"/>
+            </svg>
+            <span>Revenir aux liens</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   RÉGLAGE — passe à true les soirs de live.
+   ═══════════════════════════════════════════════════════════════════ */
+const EN_DIRECT = false;
+
+if (EN_DIRECT) {
+  document.body.classList.add('en-direct');
+  document.getElementById('libelle-etat').textContent = 'En direct';
+}
+
+const doux = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ═══ 1. HAUTEUR DE LA CARTE ════════════════════════════════════════
+   Les deux faces sont superposées : on donne au conteneur
+   la hauteur de la face visible, et il s'anime tout seul.
+   ═══════════════════════════════════════════════════════════════════ */
+const pivot = document.getElementById('pivot');
+const recto = document.getElementById('recto');
+const verso = document.getElementById('verso');
+
+function ajusterHauteur(){
+  const active = document.body.classList.contains('retournee') ? verso : recto;
+  pivot.style.height = active.offsetHeight + 'px';
+}
+new ResizeObserver(ajusterHauteur).observe(recto);
+new ResizeObserver(ajusterHauteur).observe(verso);
+addEventListener('load', ajusterHauteur);
+ajusterHauteur();
+
+/* ═══ 2. LE RETOURNEMENT ════════════════════════════════════════════ */
+function retourner(versLeDos){
+  document.body.classList.toggle('retournee', versLeDos);
+  recto.setAttribute('aria-hidden', versLeDos);
+  verso.setAttribute('aria-hidden', !versLeDos);
+  // On retire du parcours clavier tout ce qui est caché
+  recto.querySelectorAll('a,button').forEach(el => el.tabIndex = versLeDos ? -1 : 0);
+  verso.querySelectorAll('a,button').forEach(el => el.tabIndex = versLeDos ? 0 : -1);
+  ajusterHauteur();
+  // Le focus suit la face affichée
+  setTimeout(() => {
+    (versLeDos ? document.getElementById('revenir')
+               : document.getElementById('retourner')).focus({ preventScroll:true });
+  }, doux ? 0 : 500);
+}
+
+document.getElementById('retourner').addEventListener('click', () => retourner(true));
+document.getElementById('revenir'  ).addEventListener('click', () => retourner(false));
+verso.querySelectorAll('a,button').forEach(el => el.tabIndex = -1);
+
+/* Échap pour revenir */
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.body.classList.contains('retournee')) retourner(false);
+});
+
+/* ═══ 3. LE TIRAGE AU SORT ══════════════════════════════════════════
+   La roue parcourt les liens en ralentissant, puis s'arrête.
+   On n'ouvre RIEN automatiquement : le bouton devient l'invitation
+   à ouvrir. Un vrai geste de l'utilisateur, jamais bloqué par le
+   navigateur, et personne n'est éjecté de la page sans le vouloir.
+   ═══════════════════════════════════════════════════════════════════ */
+const liens   = [...document.querySelectorAll('.lien')];
+/* La roue ne parcourt que les destinations réellement ouvertes */
+const tirables = liens.filter(l => l.tagName === 'A');
+const bouton  = document.getElementById('tirage');
+const libelle = document.getElementById('tirage-libelle');
+let choisi = null;
+
+function nettoyer(){
+  liens.forEach(l => l.classList.remove('vise','gagnant'));
+  document.body.classList.remove('tirage-fini');
+}
+
+function lancer(){
+  nettoyer();
+  choisi = null;
+  bouton.disabled = true;
+  bouton.classList.remove('pret');
+  libelle.textContent = 'Ça tourne…';
+
+  const tours  = 14 + Math.floor(Math.random() * tirables.length);
+  let i = 0, pas = 0, delai = 65;
+
+  (function tourner(){
+    liens.forEach(l => l.classList.remove('vise'));
+    const courant = tirables[i % tirables.length];
+    courant.classList.add('vise');
+    i++; pas++;
+
+    if (pas <= tours) {
+      delai *= 1.14;                       // décélération progressive
+      setTimeout(tourner, doux ? 0 : delai);
+    } else {
+      courant.classList.remove('vise');
+      courant.classList.add('gagnant');
+      document.body.classList.add('tirage-fini');
+      choisi = courant;
+      bouton.disabled = false;
+      bouton.classList.add('pret');
+      libelle.textContent = 'Ouvrir · ' + courant.dataset.nom;
+    }
+  })();
+}
+
+bouton.addEventListener('click', () => {
+  if (choisi) {                            // 2e tap : on ouvre
+    window.open(choisi.href, '_blank', 'noopener');
+    nettoyer();
+    choisi = null;
+    bouton.classList.remove('pret');
+    libelle.textContent = 'Choisis pour moi';
+  } else {
+    lancer();                              // 1er tap : on tire
+  }
+});
+
+/* ═══ 4. LUMIÈRE QUI SUIT LE DOIGT ══════════════════════════════════ */
+let pointeur = null, planifie = false;
+
+function suivre(e){
+  pointeur = { x:e.clientX, y:e.clientY };
+  if (planifie) return;
+  planifie = true;
+  requestAnimationFrame(peindre);
+}
+function peindre(){
+  planifie = false;
+  if (!pointeur) return;
+  const { x, y } = pointeur;
+  document.documentElement.style.setProperty('--mx', x + 'px');
+  document.documentElement.style.setProperty('--my', y + 'px');
+  for (const lien of liens) {
+    const r = lien.getBoundingClientRect();
+    lien.style.setProperty('--bx', (x - r.left) + 'px');
+    lien.style.setProperty('--by', (y - r.top)  + 'px');
+  }
+}
+if (!doux) addEventListener('pointermove', suivre, { passive:true });
+
+/* ═══ 5. INCLINAISON 3D ═════════════════════════════════════════════ */
+const INCLINAISON = 6;   // degrés max — au-delà, ça fait gadget
+
+if (!doux) for (const lien of liens) {
+  lien.addEventListener('pointermove', e => {
+    if (lien.classList.contains('vise') || lien.classList.contains('gagnant')) return;
+    const r  = lien.getBoundingClientRect();
+    const dx = (e.clientX - r.left) / r.width  - .5;
+    const dy = (e.clientY - r.top)  / r.height - .5;
+    lien.style.transition = 'transform .12s linear';
+    lien.style.transform  =
+      `perspective(900px) rotateY(${dx * INCLINAISON}deg) rotateX(${-dy * INCLINAISON}deg) translateY(-2px)`;
+  }, { passive:true });
+
+  const relacher = () => {
+    lien.style.transition = 'transform .55s cubic-bezier(.16,1,.3,1)';
+    lien.style.transform  = '';
+  };
+  lien.addEventListener('pointerleave',  relacher);
+  lien.addEventListener('pointercancel', relacher);
+  lien.addEventListener('pointerup',     relacher);
+}
+</script>
+</body>
+</html>
