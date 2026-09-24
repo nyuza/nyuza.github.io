@@ -3,585 +3,904 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
 <title>Nyuza — Tous mes liens</title>
 
 <!-- ── Aperçu au partage (WhatsApp, Discord, TikTok) ───────────────── -->
 <meta name="description" content="Tous les liens de Nyuza au même endroit.">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Nyuza">
+<meta property="og:locale" content="fr_FR">
 <meta property="og:title" content="Nyuza">
 <meta property="og:description" content="Tous mes liens au même endroit.">
 <meta property="og:image" content="https://nyuza.github.io/avatar.jpg">
 <meta property="og:url" content="https://nyuza.github.io/">
-<meta name="theme-color" content="#0A0C11">
+<meta name="theme-color" content="#2A22F0">
 <meta name="twitter:card" content="summary_large_image">
+
+<!-- Icône d'onglet, sans fichier supplémentaire -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%232A22F0'/%3E%3Ctext x='32' y='47' font-size='40' font-weight='800' text-anchor='middle' fill='%23F4F5FF' font-family='Arial Black,Arial,sans-serif'%3EN%3C/text%3E%3C/svg%3E">
+
+<!-- Polices : si elles ne chargent pas, les polices système prennent le relais -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════
-   PALETTE — « or sur encre »
-   Deux couleurs seulement : l'or (accent) et la braise (antenne).
-   Le reste n'est que du gris travaillé.
+   PALETTE — « électrique »
+   Bleu plein cadre, blanc glacé pour respirer, mandarine pour tout
+   ce qui est vivant : le live, le lien principal, le tirage.
    ═══════════════════════════════════════════════════════════════════ */
 :root{
-  --encre:      #0A0C11;
-  --encre-haut: #131926;
-  --or:         #E8B14C;
-  --or-doux:    #F5D08A;
-  --braise:     #FF4D3D;
-  --texte:      #F2F4F8;
-  --sourdine:   #8892A6;
+  --klein:     #2A22F0;   /* le fond, énorme, saturé */
+  --ciel:      #7F8CFF;   /* lumière du fond */
+  --blanc:     #F4F5FF;   /* texte, boutons clairs */
+  --bleute:    #E3E5FF;   /* lignes du panneau */
+  --mandarine: #FF6A1F;   /* le vivant */
+  --nuit:      #0C0A3D;   /* ombres dures, texte sur clair */
+  --bonbon:    #FF8AD8;   /* cœurs uniquement */
 
-  --rayon:      18px;
-  --colonne:    26rem;
-
-  --mx: 50%;
-  --my: 30%;
+  --colonne: 26rem;
+  --f-titre: "Unbounded", "Arial Black", "Avenir Next Condensed", system-ui, sans-serif;
+  --f-corps: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
-html{ -webkit-text-size-adjust:100%; }
+html{ -webkit-text-size-adjust:100%; background:var(--klein); }
 
 body{
   min-height:100svh;
-  background:var(--encre);
-  color:var(--texte);
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background:var(--klein);
+  color:var(--blanc);
+  font-family:var(--f-corps);
+  font-optical-sizing:auto;
   -webkit-font-smoothing:antialiased;
-  display:flex; justify-content:center; align-items:center;
+  display:flex; justify-content:center; align-items:flex-start;
   padding:
-    calc(env(safe-area-inset-top) + 2.5rem)
+    calc(env(safe-area-inset-top) + 2rem)
     1.25rem
-    calc(env(safe-area-inset-bottom) + 2.5rem);
+    calc(env(safe-area-inset-bottom) + 2rem);
   overflow-x:hidden;
 }
 
-/* ═══ ATMOSPHÈRE ════════════════════════════════════════════════════ */
-.nappe{ position:fixed; border-radius:50%; pointer-events:none; z-index:0; }
-.nappe--or{
-  width:min(80vw,34rem); aspect-ratio:1; top:-14%; left:-18%;
-  background:radial-gradient(circle, rgba(232,177,76,.16), transparent 68%);
-  animation:derive-a 38s ease-in-out infinite;
+/* ═══ FOND ══════════════════════════════════════════════════════════
+   Trois nappes de lumière sur le bleu. La mandarine ne monte
+   que lorsque le live est ouvert.
+   ═══════════════════════════════════════════════════════════════════ */
+.fond{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.nappe{ position:absolute; border-radius:50%; }
+.nappe--ciel{
+  width:min(110vw,44rem); aspect-ratio:1; top:-26%; right:-34%;
+  background:radial-gradient(circle, rgba(127,140,255,.85), transparent 66%);
+  animation:derive-a 42s ease-in-out infinite;
 }
-.nappe--froide{
-  width:min(90vw,40rem); aspect-ratio:1; bottom:-24%; right:-22%;
-  background:radial-gradient(circle, rgba(58,86,140,.20), transparent 70%);
-  animation:derive-b 47s ease-in-out infinite;
+.nappe--profonde{
+  width:min(120vw,50rem); aspect-ratio:1; bottom:-38%; left:-36%;
+  background:radial-gradient(circle, rgba(12,10,61,.7), transparent 66%);
+  animation:derive-b 51s ease-in-out infinite;
 }
 .nappe--braise{
-  width:min(60vw,24rem); aspect-ratio:1; top:38%; right:-16%;
-  background:radial-gradient(circle, rgba(255,77,61,.09), transparent 72%);
-  animation:derive-c 33s ease-in-out infinite;
+  width:min(90vw,34rem); aspect-ratio:1; top:34%; left:-30%;
+  background:radial-gradient(circle, rgba(255,106,31,.55), transparent 68%);
+  opacity:0; transition:opacity 1.8s ease;
+  animation:derive-c 36s ease-in-out infinite;
 }
-@keyframes derive-a{ 50%{ transform:translate3d(14%,10%,0) scale(1.14); } }
-@keyframes derive-b{ 50%{ transform:translate3d(-12%,-9%,0) scale(1.09); } }
-@keyframes derive-c{ 50%{ transform:translate3d(-9%,13%,0) scale(.9); } }
+body.en-direct .nappe--braise{ opacity:1; }
+@keyframes derive-a{ 50%{ transform:translate3d(-10%,12%,0) scale(1.1); } }
+@keyframes derive-b{ 50%{ transform:translate3d(12%,-8%,0) scale(1.08); } }
+@keyframes derive-c{ 50%{ transform:translate3d(14%,-10%,0) scale(.92); } }
 
 .grain{
-  position:fixed; inset:0; z-index:6; pointer-events:none;
-  opacity:.05; mix-blend-mode:overlay;
+  position:fixed; inset:0; z-index:8; pointer-events:none;
+  opacity:.11; mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.halo{
-  position:fixed; inset:0; z-index:1; pointer-events:none;
-  background:radial-gradient(22rem circle at var(--mx) var(--my),
-    rgba(232,177,76,.07), transparent 62%);
+
+/* ═══ LE PORTRAIT DE FOND ═══════════════════════════════════════════
+   La photo est teintée bleu (mode « luminosité » : le noir reste noir,
+   le blanc reste blanc, tout le reste devient bleu). Elle reste fixe :
+   quand on fait défiler la page, le contenu glisse par-dessus.
+   Le bas se fond dans le bleu pour que les liens restent lisibles.
+   ═══════════════════════════════════════════════════════════════════ */
+.toji{
+  position:fixed; top:0; left:0; width:100%; height:88svh; z-index:1;
+  pointer-events:none; isolation:isolate; overflow:hidden;
+  background:
+    radial-gradient(46% 50% at 50% 20%, #A9B3FF, transparent 72%),   /* halo derrière la tête */
+    radial-gradient(90% 60% at 86% 0%, rgba(127,140,255,.9), transparent 70%),
+    var(--klein);
+  -webkit-mask-image:linear-gradient(#000 48%, rgba(0,0,0,.6) 70%, transparent 100%);
+          mask-image:linear-gradient(#000 48%, rgba(0,0,0,.6) 70%, transparent 100%);
+  animation:emerge 2.4s cubic-bezier(.2,.7,.2,1) .05s backwards;
+}
+.toji img{
+  position:absolute; inset:-3%; width:106%; height:106%;
+  object-fit:cover; object-position:50% 8%;
+  mix-blend-mode:luminosity;
+  filter:contrast(1.38) brightness(.84);
+  transform:translate(var(--tx,0%), var(--ty,0%));
+  transition:transform .8s cubic-bezier(.16,1,.3,1);
+  user-select:none; -webkit-user-drag:none;
+}
+/* Vignette : les bords s'assombrissent, le regard reste sur le visage */
+.toji::after{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(80% 68% at 50% 30%, transparent 30%, rgba(6,4,32,.9) 100%);
+}
+@keyframes emerge{
+  from{ opacity:0; transform:scale(1.14); filter:brightness(.25); }
+  to  { transform:scale(1); }
 }
 
-/* ═══ SCÈNE 3D ══════════════════════════════════════════════════════
-   La carte a un recto et un verso. Un seul objet qui pivote.
+/* ═══ SCÈNE ═════════════════════════════════════════════════════════
+   Le contenu commence sous le visage.
    ═══════════════════════════════════════════════════════════════════ */
 .scene{
   position:relative; z-index:3;
   width:100%; max-width:var(--colonne);
-  perspective:1400px;
+  margin-top:clamp(8.5rem, 31svh, 19rem);
+  display:flex; flex-direction:column; gap:1.15rem;
 }
-.pivot{
-  position:relative;
-  transform-style:preserve-3d;
-  transition:transform .9s cubic-bezier(.16,1,.3,1),
-             height   .9s cubic-bezier(.16,1,.3,1);
-  will-change:transform;
-}
-body.retournee .pivot{ transform:rotateY(180deg); }
 
-.face{
-  position:absolute; top:0; left:0; width:100%;
-  -webkit-backface-visibility:hidden;
-          backface-visibility:hidden;
-  display:flex; flex-direction:column; align-items:center; gap:2rem;
-}
-.face--dos{ transform:rotateY(180deg); }
-/* La face cachée ne doit pas être cliquable ni tabulable */
-.face[aria-hidden="true"]{ pointer-events:none; }
+body.sans-fond{ align-items:center; }
+body.sans-fond .scene{ margin-top:0; }
 
-/* ═══ VOYANT D'ANTENNE ══════════════════════════════════════════════ */
-.antenne{ position:relative; width:6.75rem; aspect-ratio:1; display:grid; place-items:center; }
-.antenne::before{
-  content:''; position:absolute; inset:0; border-radius:50%;
-  background:conic-gradient(from 0deg, transparent 0deg,
-    rgba(232,177,76,.05) 180deg, var(--or) 330deg, var(--or-doux) 350deg, transparent 360deg);
-  animation:balayage 6s linear infinite;
+/* ═══ LE WORDMARK — le moment fort ══════════════════════════════════
+   Cinq lettres qui tombent une à une et se posent avec un rebond.
+   Ensuite elles suivent le pointeur et sautent quand on les touche.
+   La taille est ajustée en JS pour que le mot remplisse la largeur.
+   ═══════════════════════════════════════════════════════════════════ */
+.nom-cadre{ width:100%; }
+.nom{
+  display:inline-flex; white-space:nowrap;
+  font-family:var(--f-titre); font-weight:800;
+  font-size:clamp(3.4rem,20vw,5.6rem);
+  line-height:.92; letter-spacing:-.045em;
+  color:var(--blanc);
+  text-shadow:.055em .055em 0 var(--nuit);
+  user-select:none; -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
 }
-.antenne::after{
-  content:''; position:absolute; inset:3px; border-radius:50%; background:var(--encre);
+.lettre{
+  display:inline-block;
+  animation:chute .95s cubic-bezier(.34,1.35,.64,1) backwards;
+  animation-delay:calc(.08s + var(--i) * .075s);
 }
-@keyframes balayage{ to{ transform:rotate(1turn); } }
+.lettre > span{
+  display:inline-block;
+  transform:rotate(calc(var(--r) + var(--px,0) * var(--k) * 3deg));
+  transition:transform .3s ease-out;
+}
+@keyframes chute{
+  from{ transform:translateY(-150%) scale(.85); opacity:0; }
+  35% { opacity:1; }
+}
 
-.antenne img, .antenne .monogramme{
-  position:relative; z-index:1;
-  width:calc(100% - 12px); aspect-ratio:1;
-  border-radius:50%; object-fit:cover;
-  box-shadow:0 1.5rem 3rem rgba(0,0,0,.6);
+/* ═══ PORTRAIT : le sticker + le badge rotatif ══════════════════════ */
+.hero{
+  display:grid; grid-template-columns:auto 1fr;
+  column-gap:1.15rem; row-gap:1.4rem; align-items:end;
+  margin-bottom:.6rem;
+}
+.hero .nom-cadre{ grid-column:1 / -1; }
+
+.avatar-zone{
+  position:relative; z-index:2; width:7.6rem;
+  animation:tape .6s cubic-bezier(.3,1.5,.5,1) .75s backwards;
+}
+.avatar{
+  display:block; position:relative;
+  width:100%; aspect-ratio:1;
+  padding:0; border:0; background:none; cursor:pointer;
+  transform:rotate(-4deg);
+  transition:transform .35s cubic-bezier(.3,1.6,.5,1);
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none; user-select:none; -webkit-user-select:none;
+  touch-action:manipulation;
+}
+.avatar:active{ transform:rotate(-2deg) scale(.96); }
+.avatar:focus-visible{ outline:3px solid var(--blanc); outline-offset:5px; border-radius:2.4rem; }
+.avatar img, .avatar .monogramme{
+  display:block; width:100%; height:100%;
+  object-fit:cover; pointer-events:none; -webkit-user-drag:none;
+  border-radius:2.3rem;
+  border:4px solid var(--blanc);
+  box-shadow:.4rem .4rem 0 var(--nuit);
 }
 .monogramme{
   display:grid; place-items:center;
-  background:linear-gradient(160deg,var(--encre-haut),#0d1119);
-  font-size:2.5rem; font-weight:700; color:var(--or); letter-spacing:-.03em;
+  background:var(--mandarine); color:var(--nuit);
+  font-family:var(--f-titre); font-size:3.4rem; font-weight:800;
 }
 
-.etat{
-  position:absolute; bottom:-.35rem; left:50%; transform:translateX(-50%); z-index:2;
-  display:flex; align-items:center; gap:.4rem;
-  padding:.28rem .7rem; border-radius:999px;
-  background:rgba(10,12,17,.92); border:1px solid rgba(255,255,255,.10);
-  font-size:.6rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--sourdine); white-space:nowrap;
+.badge{
+  position:absolute; z-index:3; bottom:-1.6rem; right:-2rem;
+  width:5.7rem; aspect-ratio:1; pointer-events:none;
+  animation:girer 18s linear infinite;
 }
-.etat .point{ width:.4rem; aspect-ratio:1; border-radius:50%; background:var(--sourdine); }
-body.en-direct .etat{ color:#FFD9D4; border-color:rgba(255,77,61,.35); }
-body.en-direct .etat .point{
-  background:var(--braise); box-shadow:0 0 0 0 rgba(255,77,61,.6);
-  animation:pouls 2s ease-out infinite;
-}
-body.en-direct .antenne::before{
-  background:conic-gradient(from 0deg,transparent 0deg,rgba(255,77,61,.06) 180deg,
-    var(--braise) 336deg,#FF8A7E 352deg,transparent 360deg);
-  animation-duration:3.4s;
-}
-@keyframes pouls{
-  70%{ box-shadow:0 0 0 .55rem rgba(255,77,61,0); }
-  100%{ box-shadow:0 0 0 0 rgba(255,77,61,0); }
-}
+@keyframes girer{ to{ transform:rotate(1turn); } }
+.badge-fond{ fill:var(--blanc); stroke:var(--nuit); stroke-width:2.2; transition:fill .8s; }
+.badge-texte{ font-family:var(--f-corps); font-weight:800; font-size:11.5px; fill:var(--nuit); }
+.badge-point{ fill:var(--nuit); transform-box:fill-box; transform-origin:center; }
+body.en-direct .badge-fond{ fill:var(--mandarine); }
+body.en-direct .badge-point{ animation:battre 1.6s ease-in-out infinite; }
+@keyframes battre{ 50%{ transform:scale(1.55); } }
 
-/* ═══ IDENTITÉ ══════════════════════════════════════════════════════ */
-.identite{ text-align:center; display:flex; flex-direction:column; gap:.45rem; }
-.nom{
-  font-size:clamp(2rem,9vw,2.6rem); font-weight:700;
-  letter-spacing:-.035em; line-height:1;
-  background:linear-gradient(175deg,#fff 30%,#9AA4B8);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
+.presentation{ display:flex; flex-direction:column; gap:.35rem; padding:0 0 .2rem 1.05rem; }
+.handle, .bio, .astuce{ text-shadow:0 1px 3px rgba(6,4,32,.95), 0 0 16px rgba(6,4,32,.85); }
+.handle{ font-size:1.2rem; font-weight:800; letter-spacing:-.01em; line-height:1.1; }
+.bio{ font-size:1rem; line-height:1.35; color:rgba(244,245,255,.88); }
+.astuce{
+  margin-top:.35rem; font-size:.86rem; line-height:1.3;
+  color:rgba(244,245,255,.9);
+  transition:opacity .6s;
 }
-.handle{
-  font-size:.68rem; font-weight:500; letter-spacing:.22em;
-  text-transform:uppercase; color:var(--sourdine); opacity:.75;
-}
-.bio{ margin-top:.5rem; font-size:.9rem; line-height:1.5; color:var(--sourdine); }
+.astuce.vu{ opacity:0; }
 
-/* ═══ LIENS ═════════════════════════════════════════════════════════ */
-.liens{ width:100%; display:flex; flex-direction:column; gap:.7rem; list-style:none; }
+/* Cœurs envoyés au toucher */
+.coeurs{ position:fixed; inset:0; z-index:9; pointer-events:none; overflow:hidden; }
+.coeur{ position:absolute; width:1.7rem; height:1.7rem; will-change:transform,opacity; }
+.coeur svg{ width:100%; height:100%; display:block; fill:currentColor; }
+
+/* ═══ PROCHAIN LIVE ═════════════════════════════════════════════════ */
+.prochain{
+  display:flex; align-items:center; gap:.8rem;
+  padding:.8rem 1.05rem; border-radius:1.15rem;
+  border:2px solid rgba(244,245,255,.3);
+  background:rgba(12,10,61,.3);
+  transition:background .8s, border-color .8s, color .8s;
+}
+.prochain-point{ flex:none; width:.7rem; aspect-ratio:1; border-radius:50%; background:var(--blanc); }
+.prochain-texte{ flex:1; min-width:0; }
+.prochain-titre{ font-size:1rem; font-weight:750; line-height:1.2; }
+.prochain-sous{ margin-top:.1rem; font-size:.9rem; color:rgba(244,245,255,.8); }
+.prochain-temps{
+  flex:none; text-align:right;
+  font-size:.95rem; font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+body.en-direct .prochain{
+  background:var(--nuit); border-color:var(--nuit); color:var(--blanc);
+}
+body.en-direct .prochain-point{ background:var(--mandarine); animation:battre 1.6s ease-in-out infinite; }
+
+/* ═══ LIENS ═════════════════════════════════════════════════════════
+   Gros boutons pleins, ombre dure : ils s'enfoncent quand on appuie.
+   ═══════════════════════════════════════════════════════════════════ */
+.liens{
+  list-style:none;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.85rem;
+}
+.liens li{ display:flex; min-width:0; }
+.liens li.plein{ grid-column:1 / -1; }
+.liens li{ animation:tape .55s cubic-bezier(.3,1.5,.5,1) backwards; }
+.liens li:nth-child(1){ animation-delay:.95s; --ang:-2.5deg; }
+.liens li:nth-child(2){ animation-delay:1.03s; --ang:2deg; }
+.liens li:nth-child(3){ animation-delay:1.11s; --ang:-2deg; }
+.liens li:nth-child(4){ animation-delay:1.19s; --ang:2.5deg; }
 
 .lien{
-  position:relative;
-  display:flex; align-items:center; gap:.9rem;
-  min-height:3.5rem; padding:0 1.15rem;
-  border-radius:var(--rayon);
-  background:rgba(255,255,255,.038);
-  border:none; color:var(--texte); text-decoration:none;
-  font-size:.95rem; font-weight:550;
-  overflow:hidden; isolation:isolate;
-  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.13),
-    0 1rem 2.5rem rgba(0,0,0,.45);
-  transform:perspective(900px);
-  transition:transform .45s cubic-bezier(.16,1,.3,1), background .3s;
-  will-change:transform;
+  --fond:var(--blanc); --encre:var(--nuit); --ombre:var(--nuit);
+  flex:1; min-width:0;
+  display:flex; align-items:center; gap:.85rem;
+  min-height:3.9rem; padding:.55rem 1.05rem;
+  border-radius:1.35rem;
+  background:var(--fond); color:var(--encre);
+  border:2.5px solid var(--nuit);
+  box-shadow:.34rem .34rem 0 var(--ombre);
+  text-decoration:none;
+  font-size:1.08rem; font-weight:750; line-height:1.15;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s ease-out, box-shadow .16s ease-out, background .2s, color .2s;
 }
-.lien::before{
-  content:''; position:absolute; inset:0; border-radius:inherit; padding:1px;
-  background:radial-gradient(12rem circle at var(--bx,50%) var(--by,0%),
-    rgba(232,177,76,.55), rgba(255,255,255,.07) 58%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor; mask-composite:exclude;
-  pointer-events:none; transition:background .2s;
+.lien:active{ transform:translate(.34rem,.34rem); box-shadow:0 0 0 var(--ombre); }
+.lien:focus-visible{ outline:3px solid var(--blanc); outline-offset:4px; }
+@media (hover:hover){
+  a.lien:hover{ transform:translate(-2px,-2px); box-shadow:.5rem .5rem 0 var(--ombre); }
+  a.lien:hover:active{ transform:translate(.34rem,.34rem); box-shadow:0 0 0 var(--ombre); }
 }
-.lien:hover{ background:rgba(255,255,255,.06); }
-.lien:active{ transform:perspective(900px) scale(.985); }
-.lien:focus-visible{ outline:2px solid var(--or); outline-offset:3px; }
 
-.lien .icone{ flex:none; width:1.25rem; height:1.25rem; color:var(--sourdine); }
-.lien .libelle{ flex:1; }
-.lien .fleche{
-  flex:none; width:1rem; height:1rem; color:var(--sourdine); opacity:.4;
-  transition:transform .3s, opacity .3s;
+.lien .puce{
+  flex:none; display:grid; place-items:center;
+  width:2.5rem; aspect-ratio:1; border-radius:50%;
+  background:var(--encre); color:var(--fond);
+  transition:background .2s, color .2s;
 }
-.lien:hover .fleche{ transform:translateX(3px); opacity:.9; }
+.lien .puce svg{ width:1.3rem; height:1.3rem; }
+.lien .libelle{ flex:1; }
+.lien .fleche{ flex:none; width:1.15rem; height:1.15rem; }
 
 .lien--principal{
-  min-height:4.25rem; font-size:1.02rem; font-weight:650;
-  background:linear-gradient(180deg,rgba(232,177,76,.13),rgba(232,177,76,.05));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.2),
-    0 1.25rem 3rem rgba(232,177,76,.13);
+  --fond:var(--mandarine);
+  min-height:5.4rem; font-size:1.32rem; font-weight:800; letter-spacing:-.015em;
 }
-.lien--principal .icone{ color:var(--or); width:1.4rem; height:1.4rem; }
-.lien--principal:hover{ background:linear-gradient(180deg,rgba(232,177,76,.19),rgba(232,177,76,.07)); }
+.lien--principal .puce{ width:3rem; }
+.lien--principal .puce svg{ width:1.6rem; height:1.6rem; }
 
-/* ── Plateformes pas encore ouvertes ─────────────────────────────── */
+/* Pas encore ouvertes : contour pointillé, sans ombre */
 .lien--bientot{
-  cursor:default;
-  background:rgba(255,255,255,.022);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 .5rem 1.5rem rgba(0,0,0,.3);
+  --fond:transparent; --encre:rgba(244,245,255,.82);
+  flex-direction:column; align-items:stretch; justify-content:space-between; gap:.75rem;
+  min-height:5.4rem; padding:.8rem .9rem .85rem;
+  border:2.5px dashed rgba(244,245,255,.5);
+  box-shadow:none; cursor:default;
+  font-size:1.05rem;
 }
-.lien--bientot .libelle,
-.lien--bientot .icone{ opacity:.42; }
-.lien--bientot::before{ background:rgba(255,255,255,.05); }
+.lien--bientot .puce{ background:rgba(244,245,255,.16); color:var(--blanc); width:2.2rem; }
+.lien--bientot .puce svg{ width:1.15rem; height:1.15rem; }
+.lien--bientot:active{ transform:none; box-shadow:none; }
+.lien--bientot .haut{ display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+.lien--bientot .libelle{ flex:none; }
 .bientot{
-  flex:none;
-  padding:.2rem .55rem; border-radius:999px;
-  border:1px solid rgba(255,255,255,.10);
-  font-size:.56rem; font-weight:600;
-  letter-spacing:.14em; text-transform:uppercase;
-  color:var(--sourdine); opacity:.6;
+  padding:.15rem .6rem; border-radius:999px;
+  background:rgba(12,10,61,.5); color:var(--blanc);
+  font-size:.78rem; font-weight:650; white-space:nowrap;
 }
 
-/* ── États du tirage au sort ──────────────────────────────────────── */
-/* Le lien survolé par la roue */
-.lien.vise{
-  background:rgba(232,177,76,.10);
-  transform:perspective(900px) translateX(4px);
-  transition:transform .09s ease-out, background .09s;
+/* ── Tirage au sort ──────────────────────────────────────────────── */
+body a.lien.vise{
+  --fond:var(--nuit); --encre:var(--blanc); --ombre:var(--blanc);
+  transform:translate(.15rem,.15rem);
+  box-shadow:.2rem .2rem 0 var(--blanc);
+  transition:none;
 }
-.lien.vise::before{
-  background:radial-gradient(14rem circle at 50% 50%, var(--or-doux), rgba(232,177,76,.3) 70%);
+body a.lien.gagnant{
+  --fond:var(--nuit); --encre:var(--mandarine); --ombre:var(--mandarine);
+  transform:rotate(-1.6deg) scale(1.035);
+  box-shadow:.45rem .45rem 0 var(--mandarine);
+  transition:transform .4s cubic-bezier(.3,1.6,.5,1), box-shadow .3s;
 }
-/* Le lien tiré */
-.lien.gagnant{
-  background:linear-gradient(180deg,rgba(232,177,76,.22),rgba(232,177,76,.08));
-  transform:perspective(900px) scale(1.025);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.28),
-    0 1.5rem 3.5rem rgba(232,177,76,.28);
-}
-.lien.gagnant::before{
-  background:radial-gradient(16rem circle at 50% 50%, var(--or), rgba(232,177,76,.35) 70%);
-}
-.lien.gagnant .icone,
-.lien.gagnant .fleche{ color:var(--or); opacity:1; }
-/* Les autres s'effacent pendant le tirage */
-body.tirage-fini .lien:not(.gagnant){ opacity:.32; transition:opacity .5s; }
+body.tirage-fini .lien:not(.gagnant){ opacity:.4; transition:opacity .5s; }
 
-/* ═══ COMMANDES (tirage + retournement) ═════════════════════════════ */
-.commandes{ display:flex; gap:.55rem; width:100%; }
-
+/* ═══ COMMANDES ═════════════════════════════════════════════════════ */
+.commandes{ display:flex; gap:.7rem; }
 .commande{
   flex:1;
-  display:flex; align-items:center; justify-content:center; gap:.5rem;
-  min-height:2.9rem; padding:0 .9rem;
-  border-radius:999px;
-  background:transparent;
-  border:1px solid rgba(255,255,255,.11);
-  color:var(--sourdine);
-  font-family:inherit; font-size:.72rem; font-weight:600;
-  letter-spacing:.09em; text-transform:uppercase;
+  display:flex; align-items:center; justify-content:center; gap:.55rem;
+  min-width:0; min-height:3.1rem; padding:0 .8rem;
+  border-radius:999px; white-space:nowrap;
+  font-family:inherit; font-size:.96rem; font-weight:750;
   cursor:pointer;
-  transition:color .3s, border-color .3s, background .3s, transform .25s;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s, box-shadow .16s, background .25s, color .25s;
 }
-.commande:hover{ color:var(--texte); border-color:rgba(255,255,255,.24); }
-.commande:active{ transform:scale(.97); }
-.commande:focus-visible{ outline:2px solid var(--or); outline-offset:3px; }
-.commande svg{ width:.95rem; height:.95rem; flex:none; }
-.commande[disabled]{ opacity:.5; cursor:default; }
+.commande svg{ width:1.1rem; height:1.1rem; flex:none; }
+.commande:focus-visible{ outline:3px solid var(--blanc); outline-offset:3px; }
+.commande[disabled]{ cursor:default; }
 
-/* Le bouton devient doré une fois le tirage terminé */
+.commande--pleine{
+  flex:1.5;
+  background:var(--nuit); color:var(--blanc);
+  border:2.5px solid var(--nuit);
+}
+.commande--vide{
+  background:transparent; color:var(--blanc);
+  border:2.5px solid rgba(244,245,255,.65);
+}
+@media (hover:hover){
+  .commande--vide:hover{ background:rgba(244,245,255,.12); }
+}
+.commande:active{ transform:scale(.96); }
+
 .commande.pret{
-  color:var(--encre); font-weight:700;
-  background:linear-gradient(180deg,var(--or-doux),var(--or));
-  border-color:transparent;
-  box-shadow:0 .75rem 2rem rgba(232,177,76,.3);
+  background:var(--mandarine); color:var(--nuit);
+  border-color:var(--nuit); box-shadow:.3rem .3rem 0 var(--nuit);
 }
-.commande.pret:hover{ color:var(--encre); }
 
-/* ═══ VERSO ═════════════════════════════════════════════════════════ */
-.dos{
-  width:100%;
+.pied{ text-align:center; font-size:.82rem; color:rgba(244,245,255,.62); }
+
+/* ═══ ENTRÉES ═══════════════════════════════════════════════════════
+   Les lettres tombent, la photo et les liens se collent comme des
+   stickers. Le reste apparaît d'un seul fondu.
+   ═══════════════════════════════════════════════════════════════════ */
+@keyframes tape{
+  from{ opacity:0; transform:scale(1.28) rotate(var(--ang,3deg)); }
+  60% { opacity:1; }
+}
+.fondu{ animation:fondu .8s ease backwards; }
+.hero .presentation{ animation-delay:.55s; }
+.prochain{ animation-delay:.85s; }
+.commandes{ animation-delay:1.3s; }
+.pied{ animation-delay:1.4s; }
+@keyframes fondu{ from{ opacity:0; } }
+
+/* ═══ LE STUDIO (panneau du bas) ════════════════════════════════════ */
+dialog{
+  border:0; padding:0; background:transparent; color:var(--nuit);
+  width:100%; max-width:var(--colonne); max-height:none;
+  margin:auto auto 0; overflow:visible;
+}
+dialog::backdrop{
+  background:rgba(12,10,61,.66);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  opacity:0; transition:opacity .35s;
+}
+dialog.ouvert::backdrop{ opacity:1; }
+
+.feuille{
+  background:var(--blanc);
+  border:2.5px solid var(--nuit); border-bottom:0;
+  border-radius:2rem 2rem 0 0;
+  padding:.85rem 1.5rem calc(1.4rem + env(safe-area-inset-bottom));
+  max-height:90svh; overflow-y:auto; overscroll-behavior:contain;
   display:flex; flex-direction:column; gap:1.5rem;
-  padding:1.75rem 1.5rem;
-  border-radius:calc(var(--rayon) + 6px);
-  background:linear-gradient(170deg, rgba(19,25,38,.92), rgba(10,12,17,.92));
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.11), 0 1.5rem 4rem rgba(0,0,0,.5);
+  transform:translateY(105%);
+  transition:transform .55s cubic-bezier(.16,1,.3,1);
 }
-.dos-titre{
-  font-size:.62rem; font-weight:600; letter-spacing:.24em;
-  text-transform:uppercase; color:var(--or); opacity:.85;
+dialog.ouvert .feuille{ transform:none; }
+
+.poignee{ align-self:center; width:2.8rem; height:.3rem; border-radius:999px; background:var(--nuit); opacity:.25; }
+.studio-titre{
+  font-family:var(--f-titre); font-weight:800;
+  font-size:2.2rem; letter-spacing:-.05em; line-height:1;
+  outline:none;
 }
-.bloc h2{
-  font-size:.66rem; font-weight:600; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--sourdine); opacity:.6;
-  margin-bottom:.7rem;
-}
-/* Planning : la seule liste numérotée justifiée, car c'est une semaine */
+.feuille h3{ font-size:1.02rem; font-weight:800; margin-bottom:.75rem; }
+
 .planning{ list-style:none; display:flex; flex-direction:column; gap:.5rem; }
 .planning li{
-  display:flex; align-items:baseline; justify-content:space-between; gap:1rem;
-  padding-bottom:.5rem;
-  border-bottom:1px solid rgba(255,255,255,.055);
-  font-size:.88rem;
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  padding:.8rem 1rem; border-radius:1rem;
+  background:var(--bleute);
 }
-.planning li:last-child{ border-bottom:none; padding-bottom:0; }
-.planning .jour{ color:var(--texte); font-weight:550; }
+.planning .jour{ font-size:1.12rem; font-weight:750; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
 .planning .heure{
-  color:var(--or); font-weight:600;
-  font-variant-numeric:tabular-nums; letter-spacing:.02em;
+  font-family:var(--f-titre); font-weight:700; font-size:1.02rem;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em;
 }
-.regles{ list-style:none; display:flex; flex-direction:column; gap:.55rem; }
-.regles li{
-  position:relative; padding-left:1.1rem;
-  font-size:.85rem; line-height:1.45; color:var(--sourdine);
+.planning li.actif{
+  background:var(--mandarine); border:2.5px solid var(--nuit);
+  box-shadow:.28rem .28rem 0 var(--nuit);
 }
+.planning .tag{
+  padding:.12rem .6rem; border-radius:999px;
+  background:var(--nuit); color:var(--blanc);
+  font-style:normal; font-size:.78rem; font-weight:700;
+}
+
+.regles{ list-style:none; display:flex; flex-direction:column; gap:.7rem; }
+.regles li{ position:relative; padding-left:1.4rem; font-size:1rem; line-height:1.45; color:#3A3A78; }
 .regles li::before{
-  content:''; position:absolute; left:0; top:.55em;
-  width:.3rem; height:.3rem; border-radius:50%; background:var(--or); opacity:.7;
+  content:''; position:absolute; left:0; top:.5em;
+  width:.6rem; aspect-ratio:1; border-radius:50%;
+  background:var(--mandarine); border:2px solid var(--nuit);
 }
-.mot{ font-size:.85rem; line-height:1.6; color:var(--sourdine); font-style:italic; }
-
-.pied{
-  font-size:.62rem; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--sourdine); opacity:.35; text-align:center;
-}
-
-/* ═══ ENTRÉE EN SCÈNE ═══════════════════════════════════════════════ */
-.apparait{ opacity:0; animation:monte .85s cubic-bezier(.16,1,.3,1) forwards; }
-@keyframes monte{
-  from{ opacity:0; transform:translateY(20px); filter:blur(8px); }
-  to  { opacity:1; transform:none;             filter:blur(0);   }
-}
-.antenne   { animation-delay:.05s; }
-.identite  { animation-delay:.22s; }
-.liens li:nth-child(1){ animation-delay:.36s; }
-.liens li:nth-child(2){ animation-delay:.43s; }
-.liens li:nth-child(3){ animation-delay:.50s; }
-.liens li:nth-child(4){ animation-delay:.57s; }
-.commandes { animation-delay:.70s; }
-.pied      { animation-delay:.80s; }
-
-@supports not (backdrop-filter:blur(4px)){
-  .lien{ background:rgba(19,25,38,.92); }
-}
+.mot{ font-size:1rem; line-height:1.55; color:#3A3A78; font-style:italic; }
+.commande--fermer{ background:var(--nuit); color:var(--blanc); border:2.5px solid var(--nuit); flex:none; width:100%; }
+.feuille .commande:focus-visible{ outline-color:var(--klein); }
 
 /* ═══ ACCESSIBILITÉ ═════════════════════════════════════════════════ */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation:none !important; transition:none !important; }
-  .apparait{ opacity:1; }
-  .halo{ display:none; }
-  /* Le retournement devient un simple échange, sans rotation */
-  .pivot{ transform:none !important; }
-  .face--dos{ transform:none; }
+  .lettre > span{ transform:rotate(var(--r)); }
+  .toji img{ transform:none !important; }
 }
 </style>
 </head>
 
 <body>
-  <div class="nappe nappe--or"></div>
-  <div class="nappe nappe--froide"></div>
-  <div class="nappe nappe--braise"></div>
-  <div class="halo"></div>
-  <div class="grain"></div>
+  <!-- Cœur réutilisable -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-coeur" viewBox="0 0 24 24">
+      <path d="M12 21.2s-8-4.9-10.2-9.8C.1 7.6 2.2 3.6 6.2 3.6c2.4 0 4 1.3 5.8 3.5 1.8-2.2 3.4-3.5 5.8-3.5 4 0 6.1 4 4.4 7.8C20 16.3 12 21.2 12 21.2z"/>
+    </symbol>
+  </svg>
 
-  <div class="scene">
-    <div class="pivot" id="pivot">
+  <div class="fond" aria-hidden="true">
+    <i class="nappe nappe--ciel"></i>
+    <i class="nappe nappe--profonde"></i>
+    <i class="nappe nappe--braise"></i>
+  </div>
+  <div class="toji" aria-hidden="true">
+    <img src="fond.jpg" alt="" draggable="false" fetchpriority="high" onerror="document.body.classList.add('sans-fond');this.parentNode.remove()">
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="coeurs" id="coeurs" aria-hidden="true"></div>
 
-      <!-- ══════════ RECTO ══════════ -->
-      <div class="face face--recto" id="recto">
+  <main class="scene">
 
-        <div class="antenne apparait">
-          <img src="avatar.jpg" alt="Nyuza" onerror="this.outerHTML='&lt;div class=\'monogramme\'&gt;N&lt;/div&gt;'">
-          <span class="etat"><span class="point"></span><span id="libelle-etat">Hors antenne</span></span>
-        </div>
+    <header class="hero">
+      <div class="nom-cadre" id="nom-cadre">
+        <h1 class="nom" id="nom" aria-label="Nyuza">
+          <span class="lettre" aria-hidden="true" style="--i:0;--r:-4deg;--k:-1"><span>N</span></span><span class="lettre" aria-hidden="true" style="--i:1;--r:3deg;--k:1.4"><span>Y</span></span><span class="lettre" aria-hidden="true" style="--i:2;--r:-2deg;--k:-.8"><span>U</span></span><span class="lettre" aria-hidden="true" style="--i:3;--r:4deg;--k:1.2"><span>Z</span></span><span class="lettre" aria-hidden="true" style="--i:4;--r:-3deg;--k:-1.3"><span>A</span></span>
+        </h1>
+      </div>
 
-        <div class="identite apparait">
-          <h1 class="nom">Nyuza</h1>
-          <p class="handle">@tiktok.nyuza</p>
-          <p class="bio">Tous mes liens au même endroit</p>
-        </div>
+      <div class="avatar-zone">
+        <button class="avatar" id="avatar" type="button" aria-label="Envoyer des cœurs">
+          <img src="avatar.jpg" alt="Nyuza" draggable="false" onerror="this.outerHTML='&lt;div class=\'monogramme\'&gt;N&lt;/div&gt;'">
+        </button>
 
-        <ul class="liens">
-          <li class="apparait">
-            <a class="lien lien--principal" data-nom="TikTok"
-               href="https://www.tiktok.com/@tiktok.nyuza" target="_blank" rel="noopener">
-              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.4 2.6 2 4.2 4.6 4.5"/>
-              </svg>
-              <span class="libelle">Voir mes lives TikTok</span>
-              <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
-          </li>
+        <svg class="badge" viewBox="0 0 100 100" aria-hidden="true">
+          <defs><path id="cercle" d="M50 50m-35 0a35 35 0 1 1 70 0a35 35 0 1 1-70 0"/></defs>
+          <circle class="badge-fond" cx="50" cy="50" r="48"/>
+          <text class="badge-texte"><textPath href="#cercle" id="badge-texte" textLength="216" lengthAdjust="spacing">hors antenne • hors antenne • </textPath></text>
+          <circle class="badge-point" cx="50" cy="50" r="9"/>
+        </svg>
+      </div>
 
-          <li class="apparait">
-            <a class="lien" data-nom="Discord" href="https://discord.gg/UTTZ8RDGrr" target="_blank" rel="noopener">
-              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M8.5 6.5C6 7 4.3 8.6 4 10.2 3.4 13 3.3 15.8 4 18c1 .9 2.3 1.5 3.6 1.8l.8-1.4"/>
-                <path d="M15.5 6.5c2.5.5 4.2 2.1 4.5 3.7.6 2.8.7 5.6 0 7.8-1 .9-2.3 1.5-3.6 1.8l-.8-1.4"/>
-                <path d="M8.5 6.5 9.2 5c1.9-.4 3.7-.4 5.6 0l.7 1.5"/>
-                <ellipse cx="9.5" cy="13" rx="1.2" ry="1.5"/><ellipse cx="14.5" cy="13" rx="1.2" ry="1.5"/>
-              </svg>
-              <span class="libelle">Rejoindre le Discord</span>
-              <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
-          </li>
+      <div class="presentation fondu">
+        <p class="handle">@tiktok.nyuza</p>
+        <p class="bio">Tous mes liens au même endroit</p>
+        <p class="astuce" id="astuce">Touche ma photo pour envoyer des cœurs</p>
+      </div>
+    </header>
 
-          <li class="apparait">
-            <span class="lien lien--bientot" data-nom="Instagram">
-              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <div class="prochain fondu">
+      <span class="prochain-point"></span>
+      <div class="prochain-texte">
+        <p class="prochain-titre" id="prochain-titre">Prochain live</p>
+        <p class="prochain-sous" id="prochain-sous"></p>
+      </div>
+      <p class="prochain-temps" id="prochain-temps"></p>
+    </div>
+
+    <ul class="liens">
+      <li class="plein">
+        <a class="lien lien--principal" data-nom="TikTok"
+           href="https://www.tiktok.com/@tiktok.nyuza" target="_blank" rel="noopener">
+          <span class="puce">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.4 2.6 2 4.2 4.6 4.5"/>
+            </svg>
+          </span>
+          <span class="libelle" id="libelle-tiktok">Voir mes lives TikTok</span>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+        </a>
+      </li>
+
+      <li class="plein">
+        <a class="lien" data-nom="Discord" href="https://discord.gg/sJTNj9JxkG" target="_blank" rel="noopener">
+          <span class="puce">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8.5 6.5C6 7 4.3 8.6 4 10.2 3.4 13 3.3 15.8 4 18c1 .9 2.3 1.5 3.6 1.8l.8-1.4"/>
+              <path d="M15.5 6.5c2.5.5 4.2 2.1 4.5 3.7.6 2.8.7 5.6 0 7.8-1 .9-2.3 1.5-3.6 1.8l-.8-1.4"/>
+              <path d="M8.5 6.5 9.2 5c1.9-.4 3.7-.4 5.6 0l.7 1.5"/>
+              <ellipse cx="9.5" cy="13" rx="1.2" ry="1.5"/><ellipse cx="14.5" cy="13" rx="1.2" ry="1.5"/>
+            </svg>
+          </span>
+          <span class="libelle">Rejoindre le Discord</span>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+        </a>
+      </li>
+
+      <li>
+        <span class="lien lien--bientot" data-nom="Instagram">
+          <span class="haut">
+            <span class="puce">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/>
                 <circle cx="17" cy="7" r=".9" fill="currentColor" stroke="none"/>
               </svg>
-              <span class="libelle">Instagram</span>
-              <span class="bientot">Bientôt</span>
             </span>
-          </li>
+            <span class="bientot">bientôt</span>
+          </span>
+          <span class="libelle">Instagram</span>
+        </span>
+      </li>
 
-          <li class="apparait">
-            <span class="lien lien--bientot" data-nom="YouTube">
-              <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <li>
+        <span class="lien lien--bientot" data-nom="YouTube">
+          <span class="haut">
+            <span class="puce">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.5 9.5 15 12l-4.5 2.5z"/>
               </svg>
-              <span class="libelle">YouTube</span>
-              <span class="bientot">Bientôt</span>
             </span>
-          </li>
-        </ul>
+            <span class="bientot">bientôt</span>
+          </span>
+          <span class="libelle">YouTube</span>
+        </span>
+      </li>
+    </ul>
 
-        <div class="commandes apparait">
-          <button class="commande" id="tirage" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 7h4l8 10h4"/><path d="M4 17h4l3-3.8"/>
-              <path d="M17 4l3 3-3 3"/><path d="M17 14l3 3-3 3"/>
-            </svg>
-            <span id="tirage-libelle">Choisis pour moi</span>
-          </button>
+    <div class="commandes fondu">
+      <button class="commande commande--pleine" id="tirage" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/>
+          <circle cx="8.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+        <span id="tirage-libelle">Choisis pour moi</span>
+      </button>
 
-          <button class="commande" id="retourner" type="button" aria-controls="verso">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 4v4h-4"/>
-              <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 20v-4h4"/>
-            </svg>
-            <span>Le studio</span>
-          </button>
-        </div>
-
-        <p class="pied apparait">Nyuza · 2026</p>
-      </div>
-
-      <!-- ══════════ VERSO ══════════ -->
-      <div class="face face--dos" id="verso" aria-hidden="true">
-        <div class="dos">
-          <p class="dos-titre">Le studio</p>
-
-          <div class="bloc">
-            <h2>Les lives de la semaine</h2>
-            <ul class="planning">
-              <li><span class="jour">Mardi</span>    <span class="heure">21h00</span></li>
-              <li><span class="jour">Jeudi</span>    <span class="heure">21h00</span></li>
-              <li><span class="jour">Samedi</span>   <span class="heure">22h30</span></li>
-            </ul>
-          </div>
-
-          <div class="bloc">
-            <h2>Dans la communauté</h2>
-            <ul class="regles">
-              <li>On se parle comme on aimerait qu'on nous parle.</li>
-              <li>Les liens et la pub se demandent avant.</li>
-              <li>Un souci pendant le live ? Un modérateur répond en MP.</li>
-            </ul>
-          </div>
-
-          <p class="mot">« Merci d'être passé. Le Discord, c'est là que ça continue entre deux lives. »</p>
-        </div>
-
-        <div class="commandes">
-          <button class="commande" id="revenir" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 6 4 12l6 6"/><path d="M4 12h16"/>
-            </svg>
-            <span>Revenir aux liens</span>
-          </button>
-        </div>
-      </div>
-
+      <button class="commande commande--vide" id="ouvrir-studio" type="button" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3.5" y="4.5" width="17" height="16" rx="3.5"/><path d="M3.5 9.5h17"/><path d="M8 2.8v3.4"/><path d="M16 2.8v3.4"/>
+        </svg>
+        <span>Le studio</span>
+      </button>
     </div>
-  </div>
+
+    <p class="pied fondu">© Nyuza 2026</p>
+  </main>
+
+  <!-- ══════════ LE STUDIO ══════════ -->
+  <dialog id="studio" aria-labelledby="studio-titre">
+    <div class="feuille">
+      <div class="poignee" aria-hidden="true"></div>
+      <h2 class="studio-titre" id="studio-titre" tabindex="-1">Le studio</h2>
+
+      <section>
+        <h3>Les lives de la semaine</h3>
+        <!-- Rempli par le script à partir du PLANNING -->
+        <ul class="planning" id="planning"></ul>
+      </section>
+
+      <section>
+        <h3>Dans la communauté</h3>
+        <ul class="regles">
+          <li>On se parle comme on aimerait qu'on nous parle.</li>
+          <li>Les liens et la pub se demandent avant.</li>
+          <li>Un souci pendant le live ? Un modérateur répond en MP.</li>
+        </ul>
+      </section>
+
+      <p class="mot">« Merci d'être passé. Le Discord, c'est là que ça continue entre deux lives. »</p>
+
+      <button class="commande commande--fermer" id="fermer" type="button">Fermer</button>
+    </div>
+  </dialog>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   RÉGLAGE — passe à true les soirs de live.
+   RÉGLAGES — tout ce que tu as besoin de modifier est ici.
    ═══════════════════════════════════════════════════════════════════ */
+
+/* true   → « En direct » en permanence
+   false  → hors antenne, avec le compte à rebours
+   'auto' → la page détecte toute seule les créneaux du PLANNING */
 const EN_DIRECT = true;
 
-if (EN_DIRECT) {
-  document.body.classList.add('en-direct');
-  document.getElementById('libelle-etat').textContent = 'En direct';
-}
+/* jour : 0 = dimanche, 1 = lundi, 2 = mardi … 6 = samedi */
+const PLANNING = [
+  { jour: 2, nom: 'Mardi',  h: 21, m: 0  },
+  { jour: 4, nom: 'Jeudi',  h: 21, m: 0  },
+  { jour: 6, nom: 'Samedi', h: 22, m: 30 },
+];
 
+/* Décalage horaire du planning par rapport à UTC.
+   Bamako = 0. Mets 1 pour Paris en hiver, 2 en été, etc.
+   Le compte à rebours reste juste pour tout le monde, où qu'il soit. */
+const DECALAGE_H = 0;
+
+/* Pendant combien d'heures un créneau compte comme « en direct » (mode 'auto') */
+const DUREE_LIVE_H = 3;
+
+
+/* ═══════════════════════════════════════════════════════════════════ */
+const $    = id => document.getElementById(id);
+const pad  = n  => String(n).padStart(2, '0');
 const doux = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ═══ 1. HAUTEUR DE LA CARTE ════════════════════════════════════════
-   Les deux faces sont superposées : on donne au conteneur
-   la hauteur de la face visible, et il s'anime tout seul.
+
+/* ═══ 1. PLANNING ET COMPTE À REBOURS ═══════════════════════════════ */
+function occurrences(maintenant){
+  const local  = new Date(maintenant + DECALAGE_H * 36e5);
+  const minuit = Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate());
+  const liste  = [];
+  for (let d = -1; d <= 8; d++){
+    const jourMs = minuit + d * 864e5;
+    const jour   = new Date(jourMs).getUTCDay();
+    for (const p of PLANNING){
+      if (p.jour === jour)
+        liste.push({ p, debut: jourMs + (p.h * 60 + p.m) * 6e4 - DECALAGE_H * 36e5 });
+    }
+  }
+  return liste.sort((a, b) => a.debut - b.debut);
+}
+
+function duree(ms){
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const j = Math.floor(s / 86400),
+        h = Math.floor(s % 86400 / 3600),
+        m = Math.floor(s % 3600 / 60);
+  if (j > 0) return `${j} j ${pad(h)} h`;
+  if (h > 0) return `${pad(h)} h ${pad(m)} min`;
+  return `${pad(m)} min ${pad(s % 60)} s`;
+}
+
+const heureTxt = p => p.h + 'h' + pad(p.m);
+
+let etatAffiche  = null;
+let cleePlanning = '';
+
+function appliquerDirect(live){
+  if (live === etatAffiche) return;
+  etatAffiche = live;
+  document.body.classList.toggle('en-direct', live);
+  $('badge-texte').textContent = live ? 'en direct • en direct • ' : 'hors antenne • hors antenne • ';
+  $('libelle-tiktok').textContent = live ? 'Rejoindre le live TikTok' : 'Voir mes lives TikTok';
+}
+
+function dessinerPlanning(cible, live){
+  const cle = live + '|' + (cible ? cible.debut : '');
+  if (cle === cleePlanning) return;
+  cleePlanning = cle;
+  const ul = $('planning');
+  ul.textContent = '';
+  for (const p of PLANNING){
+    const li   = document.createElement('li');
+    const jour = document.createElement('span');
+    jour.className = 'jour';
+    jour.textContent = p.nom;
+    if (cible && cible.p === p){
+      li.className = 'actif';
+      const tag = document.createElement('em');
+      tag.className = 'tag';
+      tag.textContent = live ? 'en cours' : 'prochain';
+      jour.append(tag);
+    }
+    const heure = document.createElement('span');
+    heure.className = 'heure';
+    heure.textContent = heureTxt(p);
+    li.append(jour, heure);
+    ul.append(li);
+  }
+}
+
+function majDirect(){
+  const maintenant = Date.now();
+  const occ      = occurrences(maintenant);
+  const enCours  = occ.find(o => o.debut <= maintenant && maintenant < o.debut + DUREE_LIVE_H * 36e5);
+  const suivante = occ.find(o => o.debut > maintenant);
+  const live     = EN_DIRECT === 'auto' ? !!enCours : !!EN_DIRECT;
+
+  appliquerDirect(live);
+
+  if (live){
+    $('prochain-titre').textContent = 'Le live est ouvert';
+    $('prochain-sous').textContent  = 'Passe dire bonjour';
+    $('prochain-temps').textContent = '';
+    dessinerPlanning(enCours || null, true);
+  } else if (suivante){
+    $('prochain-titre').textContent = 'Prochain live';
+    $('prochain-sous').textContent  = suivante.p.nom + ' à ' + heureTxt(suivante.p);
+    $('prochain-temps').textContent = 'dans ' + duree(suivante.debut - maintenant);
+    dessinerPlanning(suivante, false);
+  }
+}
+
+
+/* ═══ 2. LE WORDMARK ════════════════════════════════════════════════
+   Le mot remplit toute la largeur, quelle que soit la police.
    ═══════════════════════════════════════════════════════════════════ */
-const pivot = document.getElementById('pivot');
-const recto = document.getElementById('recto');
-const verso = document.getElementById('verso');
+const nom   = $('nom');
+const cadre = $('nom-cadre');
 
-function ajusterHauteur(){
-  const active = document.body.classList.contains('retournee') ? verso : recto;
-  pivot.style.height = active.offsetHeight + 'px';
+function ajusterNom(){
+  nom.style.fontSize = '100px';
+  const large = nom.getBoundingClientRect().width;
+  const dispo = cadre.clientWidth;
+  if (!large || !dispo) return;
+  nom.style.fontSize = (100 * dispo * .955 / large).toFixed(2) + 'px';
 }
-new ResizeObserver(ajusterHauteur).observe(recto);
-new ResizeObserver(ajusterHauteur).observe(verso);
-addEventListener('load', ajusterHauteur);
-ajusterHauteur();
-
-/* ═══ 2. LE RETOURNEMENT ════════════════════════════════════════════ */
-function retourner(versLeDos){
-  document.body.classList.toggle('retournee', versLeDos);
-  recto.setAttribute('aria-hidden', versLeDos);
-  verso.setAttribute('aria-hidden', !versLeDos);
-  // On retire du parcours clavier tout ce qui est caché
-  recto.querySelectorAll('a,button').forEach(el => el.tabIndex = versLeDos ? -1 : 0);
-  verso.querySelectorAll('a,button').forEach(el => el.tabIndex = versLeDos ? 0 : -1);
-  ajusterHauteur();
-  // Le focus suit la face affichée
-  setTimeout(() => {
-    (versLeDos ? document.getElementById('revenir')
-               : document.getElementById('retourner')).focus({ preventScroll:true });
-  }, doux ? 0 : 500);
+new ResizeObserver(ajusterNom).observe(cadre);
+if (document.fonts){
+  document.fonts.ready.then(ajusterNom);
+  document.fonts.addEventListener('loadingdone', ajusterNom);   // la police arrive après coup
 }
+addEventListener('load', ajusterNom);
 
-document.getElementById('retourner').addEventListener('click', () => retourner(true));
-document.getElementById('revenir'  ).addEventListener('click', () => retourner(false));
-verso.querySelectorAll('a,button').forEach(el => el.tabIndex = -1);
+/* Les lettres suivent le pointeur (et la photo, très légèrement, sur ordinateur)… */
+const toji = document.querySelector('.toji');
+const souris = matchMedia('(hover:hover)').matches;
+let px = 0, py = 0, pxPlanifie = false;
+if (!doux) addEventListener('pointermove', e => {
+  px = (e.clientX / innerWidth)  * 2 - 1;
+  py = (e.clientY / innerHeight) * 2 - 1;
+  if (pxPlanifie) return;
+  pxPlanifie = true;
+  requestAnimationFrame(() => {
+    pxPlanifie = false;
+    nom.style.setProperty('--px', px.toFixed(3));
+    if (souris && toji){
+      toji.style.setProperty('--tx', (-px * 1.1).toFixed(2) + '%');
+      toji.style.setProperty('--ty', (-py * .8).toFixed(2) + '%');
+    }
+  });
+}, { passive: true });
 
-/* Échap pour revenir */
-addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.body.classList.contains('retournee')) retourner(false);
+/* … et sautent quand on les touche */
+document.querySelectorAll('.lettre > span').forEach(s => {
+  s.addEventListener('pointerdown', () => {
+    if (doux) return;
+    s.animate(
+      [{ translate: '0 0' }, { translate: '0 -.32em' }, { translate: '0 0' }],
+      { duration: 460, easing: 'cubic-bezier(.3,1.6,.5,1)' }
+    );
+  });
 });
 
-/* ═══ 3. LE TIRAGE AU SORT ══════════════════════════════════════════
+
+/* ═══ 3. LES CŒURS ══════════════════════════════════════════════════
+   Un tap envoie une salve, un appui long fait monter un flot continu,
+   comme un live TikTok.
+   ═══════════════════════════════════════════════════════════════════ */
+const calque  = $('coeurs');
+const avatar  = $('avatar');
+const TEINTES = ['#FF8AD8', '#FF6A1F', '#F4F5FF', '#FFC2EC', '#FF6A1F'];
+let flot = null;
+
+function coeur(){
+  if (doux || calque.childElementCount > 70) return;
+  const r  = avatar.getBoundingClientRect();
+  const x0 = r.left + r.width  * (.25 + Math.random() * .5);
+  const y0 = r.top  + r.height * (.2  + Math.random() * .5);
+  const dx = (Math.random() - .5) * 150;
+  const h  = 230 + Math.random() * 190;
+  const rot = (Math.random() - .5) * 60;
+  const el = document.createElement('span');
+  el.className = 'coeur';
+  el.style.left  = x0 + 'px';
+  el.style.top   = y0 + 'px';
+  el.style.color = TEINTES[Math.floor(Math.random() * TEINTES.length)];
+  el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-coeur"/></svg>';
+  calque.append(el);
+  const e = s => `translate(calc(-50% + ${(dx * s).toFixed(1)}px), calc(-50% - ${(h * s).toFixed(1)}px))`;
+  el.animate([
+    { transform: `${e(0)} scale(.3) rotate(0deg)`,                 opacity: 0 },
+    { transform: `${e(.12)} scale(1.1) rotate(${rot * .2}deg)`,    opacity: 1, offset: .12 },
+    { transform: `${e(.7)} scale(1) rotate(${rot * .7}deg)`,       opacity: 1, offset: .7 },
+    { transform: `${e(1)} scale(.85) rotate(${rot}deg)`,           opacity: 0 }
+  ], { duration: 1500 + Math.random() * 800, easing: 'cubic-bezier(.25,.6,.35,1)' })
+    .onfinish = () => el.remove();
+}
+function salve(n){ for (let i = 0; i < n; i++) setTimeout(coeur, i * 55); }
+function arreter(){ clearInterval(flot); flot = null; }
+
+avatar.addEventListener('pointerdown', () => {
+  $('astuce').classList.add('vu');
+  salve(5);
+  arreter();
+  flot = setInterval(coeur, 120);
+});
+['pointerup', 'pointerleave', 'pointercancel'].forEach(t => avatar.addEventListener(t, arreter));
+avatar.addEventListener('contextmenu', e => e.preventDefault());
+/* Clavier : Entrée ou Espace (detail === 0 → pas un clic de souris) */
+avatar.addEventListener('click', e => { if (e.detail === 0){ $('astuce').classList.add('vu'); salve(8); } });
+
+
+/* ═══ 4. LE STUDIO ══════════════════════════════════════════════════ */
+const studio = $('studio');
+let fermeture;
+
+function ouvrirStudio(){
+  clearTimeout(fermeture);
+  document.documentElement.style.overflow = 'hidden';
+  studio.showModal();
+  void studio.offsetWidth;                      // force la mise en page avant l'animation
+  studio.classList.add('ouvert');
+  $('studio-titre').focus({ preventScroll: true });
+}
+function fermerStudio(){
+  studio.classList.remove('ouvert');
+  clearTimeout(fermeture);
+  fermeture = setTimeout(() => studio.close(), doux ? 0 : 450);
+}
+
+$('ouvrir-studio').addEventListener('click', ouvrirStudio);
+$('fermer').addEventListener('click', fermerStudio);
+studio.addEventListener('cancel', e => { e.preventDefault(); fermerStudio(); });   // Échap
+studio.addEventListener('click', e => { if (e.target === studio) fermerStudio(); }); // clic hors du panneau
+studio.addEventListener('close', () => { document.documentElement.style.overflow = ''; });
+
+
+/* ═══ 5. LE TIRAGE AU SORT ══════════════════════════════════════════
    La roue parcourt les liens en ralentissant, puis s'arrête.
    On n'ouvre RIEN automatiquement : le bouton devient l'invitation
    à ouvrir. Un vrai geste de l'utilisateur, jamais bloqué par le
    navigateur, et personne n'est éjecté de la page sans le vouloir.
    ═══════════════════════════════════════════════════════════════════ */
-const liens   = [...document.querySelectorAll('.lien')];
+const liens    = [...document.querySelectorAll('.lien')];
 /* La roue ne parcourt que les destinations réellement ouvertes */
 const tirables = liens.filter(l => l.tagName === 'A');
-const bouton  = document.getElementById('tirage');
-const libelle = document.getElementById('tirage-libelle');
+const bouton   = $('tirage');
+const libelle  = $('tirage-libelle');
 let choisi = null;
 
 function nettoyer(){
-  liens.forEach(l => l.classList.remove('vise','gagnant'));
+  liens.forEach(l => l.classList.remove('vise', 'gagnant'));
   document.body.classList.remove('tirage-fini');
 }
 
@@ -592,7 +911,7 @@ function lancer(){
   bouton.classList.remove('pret');
   libelle.textContent = 'Ça tourne…';
 
-  const tours  = 14 + Math.floor(Math.random() * tirables.length);
+  const tours = 14 + Math.floor(Math.random() * tirables.length);
   let i = 0, pas = 0, delai = 65;
 
   (function tourner(){
@@ -612,6 +931,7 @@ function lancer(){
       bouton.disabled = false;
       bouton.classList.add('pret');
       libelle.textContent = 'Ouvrir · ' + courant.dataset.nom;
+      if (navigator.vibrate) navigator.vibrate(15);   // petit clic tactile sur Android
     }
   })();
 }
@@ -628,51 +948,11 @@ bouton.addEventListener('click', () => {
   }
 });
 
-/* ═══ 4. LUMIÈRE QUI SUIT LE DOIGT ══════════════════════════════════ */
-let pointeur = null, planifie = false;
 
-function suivre(e){
-  pointeur = { x:e.clientX, y:e.clientY };
-  if (planifie) return;
-  planifie = true;
-  requestAnimationFrame(peindre);
-}
-function peindre(){
-  planifie = false;
-  if (!pointeur) return;
-  const { x, y } = pointeur;
-  document.documentElement.style.setProperty('--mx', x + 'px');
-  document.documentElement.style.setProperty('--my', y + 'px');
-  for (const lien of liens) {
-    const r = lien.getBoundingClientRect();
-    lien.style.setProperty('--bx', (x - r.left) + 'px');
-    lien.style.setProperty('--by', (y - r.top)  + 'px');
-  }
-}
-if (!doux) addEventListener('pointermove', suivre, { passive:true });
-
-/* ═══ 5. INCLINAISON 3D ═════════════════════════════════════════════ */
-const INCLINAISON = 6;   // degrés max — au-delà, ça fait gadget
-
-if (!doux) for (const lien of liens) {
-  lien.addEventListener('pointermove', e => {
-    if (lien.classList.contains('vise') || lien.classList.contains('gagnant')) return;
-    const r  = lien.getBoundingClientRect();
-    const dx = (e.clientX - r.left) / r.width  - .5;
-    const dy = (e.clientY - r.top)  / r.height - .5;
-    lien.style.transition = 'transform .12s linear';
-    lien.style.transform  =
-      `perspective(900px) rotateY(${dx * INCLINAISON}deg) rotateX(${-dy * INCLINAISON}deg) translateY(-2px)`;
-  }, { passive:true });
-
-  const relacher = () => {
-    lien.style.transition = 'transform .55s cubic-bezier(.16,1,.3,1)';
-    lien.style.transform  = '';
-  };
-  lien.addEventListener('pointerleave',  relacher);
-  lien.addEventListener('pointercancel', relacher);
-  lien.addEventListener('pointerup',     relacher);
-}
+/* ═══ DÉMARRAGE ═════════════════════════════════════════════════════ */
+majDirect();
+setInterval(majDirect, 1000);
+ajusterNom();
 </script>
 </body>
 </html>
